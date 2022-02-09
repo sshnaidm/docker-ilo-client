@@ -1,13 +1,20 @@
 # Inspired by ando023/docker-firefox-java
-FROM jlesage/baseimage-gui:ubuntu-16.04-v3.5.1
+FROM jlesage/baseimage-gui:ubuntu-16.04-v3.5.8
 
 ENV APP_NAME="HP ILO client"
 
 RUN mkdir /app && \
     chown ${USER_ID}:${GROUP_ID} /app
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list && \
+RUN apt-get update && \
+    apt-get -y install python3 && \
+    echo "deb http://archive.ubuntu.com/ubuntu trusty main restricted universe multiverse" > /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse " >> /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu trusty-proposed main restricted universe multiverse " >> /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu trusty-security main restricted universe multiverse " >> /etc/apt/sources.list && \
 	apt-get update && \
+    apt-get -y remove tzdata && \
 	apt-get -y upgrade && \
 	apt-get -y install firefox \
 		nano curl \
@@ -15,7 +22,8 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt
         icedtea-netx \
         openjdk-6-jre \
         openjdk-6-jre-headless \
-        tzdata-java
+        tzdata-java \
+        tzdata
 
 # Autostart firefox (might not be the best way to do it, but it does the trick)
 RUN bash -c 'echo "exec openbox-session &" >> ~/.xinitrc' && \
